@@ -1,8 +1,8 @@
-# 🚦 Integrated Smart City Traffic Management System
+# Urban Traffic Management System (SGTU)
 
 A comprehensive smart city traffic management system integrating multiple services for real-time traffic analysis, environmental monitoring, and intelligent control.
 
-## 📋 Overview
+## Overview
 
 This integrated system combines four previously separate projects into a unified platform:
 
@@ -11,7 +11,7 @@ This integrated system combines four previously separate projects into a unified
 - **Environmental Monitoring** - Air quality (pollution) and noise level tracking
 - **Real-time Dashboard** - Next.js web interface for visualization and control
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ├── Traffic/                    # Camera-based traffic monitoring (REST + RMI + Kafka)
@@ -85,7 +85,7 @@ This integrated system combines four previously separate projects into a unified
 | RMI Registry | 1099 | TCP | Camera remote control |
 | MySQL | 3306 | TCP | Database |
 
-## 📖 Documentation
+## Documentation
 
 Detailed documentation is available in the `integrated-traffic-system/` directory:
 
