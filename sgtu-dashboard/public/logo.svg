@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Fond circulaire -->
+  <circle cx="100" cy="100" r="95" fill="#0f172a" stroke="#2563eb" stroke-width="4"/>
+
+  <!-- Icône ville stylisée -->
+  <rect x="60" y="90" width="20" height="50" fill="#2563eb" rx="2"/>
+  <rect x="90" y="70" width="20" height="70" fill="#3b82f6" rx="2"/>
+  <rect x="120" y="80" width="20" height="60" fill="#2563eb" rx="2"/>
+
+  <!-- Route horizontale -->
+  <rect x="45" y="142" width="110" height="8" fill="#334155" rx="2"/>
+  <rect x="92" y="144" width="16" height="4" fill="#f59e0b" rx="1"/>
+
+  <!-- Feu de signalisation -->
+  <rect x="148" y="100" width="10" height="28" fill="#1e293b" rx="2" stroke="#334155" stroke-width="1"/>
+  <circle cx="153" cy="106" r="3" fill="#22c55e"/>
+  <circle cx="153" cy="114" r="3" fill="#334155"/>
+  <circle cx="153" cy="122" r="3" fill="#334155"/>
+
+  <!-- Texte SGTU -->
+  <text x="100" y="175" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#f8fafc" text-anchor="middle" letter-spacing="3">SGTU</text>
+</svg>
