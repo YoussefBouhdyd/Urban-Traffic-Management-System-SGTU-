@@ -1,99 +1,207 @@
-# Urban Traffic Management System (SGTU)
+# Integrated Smart City Traffic Management System
 
-A comprehensive smart city traffic management system integrating multiple services for real-time traffic analysis, environmental monitoring, and intelligent control.
+A comprehensive distributed system for real-time traffic monitoring, environmental quality tracking, and intelligent traffic control. This system integrates camera-based traffic analysis, SOAP-based traffic management services, environmental monitoring (air quality and noise levels), and a modern web dashboard for visualization and control.
 
-## Overview
+## System Overview
 
-This integrated system combines four previously separate projects into a unified platform:
+The system consists of five main components working together to provide a complete smart city traffic management solution:
 
-- **Traffic Camera Analysis Service** - Real-time traffic monitoring with AI-powered analysis
-- **SOAP Traffic Services** - Traffic flow and traffic light management
-- **Environmental Monitoring** - Air quality (pollution) and noise level tracking
-- **Real-time Dashboard** - Next.js web interface for visualization and control
+1. **Traffic Camera & Analysis Service** - Real-time traffic monitoring using camera data
+2. **Traffic Management Services** - SOAP and REST services for traffic flow and traffic light control
+3. **Environmental Monitoring Services** - Air quality (pollution) and noise level tracking
+4. **Dashboard Application** - Web-based interface for visualization and control
+5. **System Integration** - Unified deployment and management infrastructure
 
 ## Architecture
 
+The system uses a microservices architecture with event-driven communication through Apache Kafka:
+
 ```
-├── Traffic/                    # Camera-based traffic monitoring (REST + RMI + Kafka)
-├── javaproject/               # SOAP services and centrale REST API
-│   ├── services/              # SOAP ServiceFlux & ServiceFeux
-│   ├── client/                # SOAP client simulator
-│   └── centraleservice/       # Central REST API (Flux, Feux, Alerts)
-├── sgtu-backend/              # Environmental monitoring services
-│   ├── service-pollution-rest/ # Air quality monitoring (REST + Kafka)
-│   ├── service-bruit-tcp/     # Noise monitoring (TCP + Kafka)
-│   ├── service-central/       # Central Kafka consumer & MySQL storage
-│   ├── simulateur-pollution/  # Pollution data simulator
-│   └── simulateur-bruit/      # Noise data simulator
-├── sgtu-dashboard/            # Next.js 14 dashboard (React + TypeScript)
-└── integrated-traffic-system/ # Integration scripts and documentation
+┌────────────────────────────────────────────────────────────────────┐
+│                          Apache Kafka                              │
+│                     (Message Streaming Platform)                   │
+└────────────────────────────────────────────────────────────────────┘
+                                  │
+        ┌─────────────────────────┼─────────────────────────┐
+        │                         │                         │
+        ▼                         ▼                         ▼
+┌───────────────┐        ┌───────────────┐        ┌───────────────┐
+│ Traffic Camera│        │   Traffic     │        │ Environmental │
+│   & Analysis  │        │  Management   │        │  Monitoring   │
+│   Service     │        │   Services    │        │   Services    │
+│               │        │               │        │               │
+│ - REST API    │        │ - SOAP API    │        │ - REST API    │
+│ - RMI Server  │        │ - REST API    │        │ - TCP Server  │
+│ - Kafka Prod. │        │ - Kafka Cons. │        │ - Kafka Prod. │
+└───────────────┘        └───────────────┘        └───────────────┘
+        │                         │                         │
+        └─────────────────────────┼─────────────────────────┘
+                                  │
+                                  ▼
+                          ┌───────────────┐
+                          │  MySQL        │
+                          │  Database     │
+                          └───────────────┘
+                                  │
+                                  ▼
+                          ┌───────────────┐
+                          │  Next.js      │
+                          │  Dashboard    │
+                          └───────────────┘
 ```
 
-## 🚀 Quick Start
+## Technology Stack
+
+### Backend Services
+- **Java 21** - Primary programming language for all backend services
+- **Apache Maven** - Build and dependency management
+- **Apache Kafka 2.13-3.8.0** - Event streaming platform
+- **MySQL 8.0** - Relational database for persistent storage
+
+### Service Frameworks
+- **JAX-RS (Jersey 3.1.3)** - RESTful web services
+- **JAX-WS** - SOAP web services
+- **Grizzly HTTP Server** - Lightweight HTTP server
+- **Jetty 11** - Servlet container
+
+### Frontend
+- **Next.js 14** - React framework for the dashboard
+- **TypeScript** - Type-safe JavaScript
+- **Tailwind CSS** - Utility-first CSS framework
+- **Zustand** - State management
+
+## Quick Start
 
 ### Prerequisites
 
-- **Java 21** or higher
-- **Apache Maven 3.6+**
-- **Node.js 18+** and npm
-- **MySQL 8.x**
-- **Apache Kafka 2.13-3.8.0**
+- Java JDK 21 or higher
+- Apache Maven 3.6+
+- Node.js 18+ and npm
+- MySQL 8.0
+- Apache Kafka 2.13-3.8.0
 
 ### Installation
 
-1. **Clone the repository:**
-   ```bash
-   git clone <your-repo-url>
-   cd "Java Project Traffic"
-   ```
+1. Start infrastructure services:
+```bash
+cd integrated-traffic-system
 
-2. **Set up infrastructure:**
-   ```bash
-   cd integrated-traffic-system
-   
-   # Start Kafka & Zookeeper
-   ./scripts/start-kafka.sh
-   
-   # Create Kafka topics
-   ./scripts/setup-kafka.sh
-   
-   # Initialize MySQL database
-   ./scripts/setup-database.sh
-   ```
+# Start Kafka and Zookeeper
+./scripts/start-kafka.sh
 
-3. **Start all services:**
-   ```bash
-   ./scripts/start-all.sh
-   ```
+# Create Kafka topics
+./scripts/setup-kafka.sh
 
-4. **Access the dashboard:**
-   Open your browser to `http://localhost:3000`
+# Initialize MySQL database
+./scripts/setup-database.sh
+```
 
-## 📊 System Ports
+2. Build and start all services:
+```bash
+./scripts/start-all.sh
+```
 
-| Service | Port | Protocol | Description |
-|---------|------|----------|-------------|
-| Dashboard | 3000 | HTTP | Next.js web interface |
-| Traffic Camera API | 8083 | HTTP/REST | Camera analysis & recommendations |
-| SOAP ServiceFlux | 8080 | HTTP/SOAP | Traffic flow service |
-| SOAP ServiceFeux | 8081 | HTTP/SOAP | Traffic lights service |
-| Centrale REST API | 9999 | HTTP/REST | Central API (Flux, Feux, Alerts) |
-| Pollution Service | 8082 | HTTP/REST | Air quality monitoring |
-| Noise Service | 5000 | TCP | Noise level monitoring |
-| Kafka Broker | 9092 | TCP | Message streaming |
-| Zookeeper | 2181 | TCP | Kafka coordination |
-| RMI Registry | 1099 | TCP | Camera remote control |
-| MySQL | 3306 | TCP | Database |
+3. Access the dashboard:
+```
+http://localhost:3000
+```
+
+### Service Ports
+
+| Service | Port | Protocol |
+|---------|------|----------|
+| Dashboard | 3000 | HTTP |
+| Traffic Camera API | 8083 | HTTP/REST |
+| SOAP ServiceFlux | 8080 | HTTP/SOAP |
+| SOAP ServiceFeux | 8081 | HTTP/SOAP |
+| Centrale REST API | 9999 | HTTP/REST |
+| Pollution Service | 8082 | HTTP/REST |
+| Noise Service | 5000 | TCP |
+| Kafka Broker | 9092 | TCP |
+| Zookeeper | 2181 | TCP |
+| RMI Registry | 1099 | TCP |
+| MySQL | 3306 | TCP |
 
 ## Documentation
 
-Detailed documentation is available in the `integrated-traffic-system/` directory:
+Detailed documentation for each component:
 
-- **[QUICKSTART.md](integrated-traffic-system/QUICKSTART.md)** - Complete setup and testing guide
-- **[ARCHITECTURE.md](integrated-traffic-system/ARCHITECTURE.md)** - System architecture (if exists)
-- **[API_TESTING.md](Traffic/API_TESTING.md)** - API endpoint testing guide
+### 1. Traffic Camera & Analysis Service
+**File:** [docs/CAMERA_SERVICE.md](docs/CAMERA_SERVICE.md)
 
-## 🛠️ Development
+Covers the camera-based traffic monitoring system including:
+- Real-time traffic analysis
+- AI-powered recommendations
+- Alert generation
+- REST API endpoints
+- RMI remote control interface
+
+### 2. Traffic Management Services
+**File:** [docs/TRAFFIC_MANAGEMENT.md](docs/TRAFFIC_MANAGEMENT.md)
+
+Describes the SOAP and REST services for traffic control:
+- SOAP ServiceFlux (traffic flow monitoring)
+- SOAP ServiceFeux (traffic light control)
+- Centrale REST API (unified interface)
+- Traffic optimization algorithms
+
+### 3. Environmental Monitoring Services
+**File:** [docs/ENVIRONMENTAL_MONITORING.md](docs/ENVIRONMENTAL_MONITORING.md)
+
+Details the pollution and noise monitoring capabilities:
+- Air quality monitoring (CO2, PM2.5, PM10, NO2, O3)
+- Noise level tracking
+- Alert threshold management
+- Data collection and storage
+
+### 4. Dashboard Application
+**File:** [docs/DASHBOARD.md](docs/DASHBOARD.md)
+
+Explains the web-based user interface:
+- Real-time visualization
+- Traffic light control interface
+- Environmental data display
+- Alert management
+- Historical analytics
+
+### 5. System Deployment & Integration
+**File:** [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
+
+Provides comprehensive deployment information:
+- System architecture
+- Installation procedures
+- Configuration management
+- Monitoring and maintenance
+- Troubleshooting guide
+
+## Key Features
+
+### Traffic Monitoring
+- Real-time camera-based traffic analysis
+- Vehicle count and congestion detection
+- Traffic flow measurement across four routes (North, South, East, West)
+- Historical traffic data visualization
+
+### Traffic Control
+- Intelligent traffic light management
+- Dynamic timing adjustments based on traffic conditions
+- Manual override capabilities
+- Traffic optimization recommendations
+
+### Environmental Monitoring
+- Continuous air quality measurement
+- Noise level tracking by zone
+- Alert generation for threshold violations
+- Historical trend analysis
+
+### Dashboard Interface
+- Real-time data visualization
+- Interactive traffic light control
+- Alert management system
+- Multi-zone environmental monitoring
+- Historical charts and analytics
+
+## Development
 
 ### Building Individual Modules
 
@@ -114,53 +222,43 @@ npm run build
 
 ### Running Services Individually
 
+Refer to the specific service documentation for detailed instructions on running services in development mode.
+
+## Testing
+
+### API Testing
+
+Each service provides REST or SOAP endpoints that can be tested using curl or API testing tools. Example:
+
 ```bash
-# Camera Service
-cd Traffic
-java -jar target/traffic-management-1.0-SNAPSHOT.jar
-
-# Camera Simulator
-cd Traffic
-java -cp "target/traffic-management-1.0-SNAPSHOT.jar:target/lib/*" \
-  com.smartcity.traffic.CameraSimulatorMain
-
-# SOAP Services
-cd javaproject/services
-java -jar target/services-1.0-SNAPSHOT.jar
-
-# Centrale REST Service
-cd javaproject/centraleservice
-java -jar target/centrale.jar
-
-# Dashboard
-cd sgtu-dashboard
-npm run dev
-```
-
-## 🧪 Testing
-
-### API Endpoints
-
-**Traffic Camera API:**
-```bash
+# Test Camera API
 curl http://localhost:8083/api/traffic/latest
-curl http://localhost:8083/api/alerts
-curl http://localhost:8083/api/recommendations
-```
 
-**Centrale REST API:**
-```bash
+# Test Centrale API
 curl http://localhost:9999/centrale/api/Flux/latest
-curl http://localhost:9999/centrale/api/Feux/etat
-curl http://localhost:9999/centrale/api/Alert
-```
 
-**Pollution Service:**
-```bash
+# Test Pollution API
 curl http://localhost:8082/api/pollution/latest
 ```
 
-## 🛑 Stopping Services
+### System Health Check
+
+```bash
+cd integrated-traffic-system
+./scripts/health-check.sh
+```
+
+## Monitoring
+
+The system provides several monitoring capabilities:
+
+- Service health endpoints
+- Kafka topic monitoring
+- Database connection status
+- Log aggregation in `integrated-traffic-system/logs/`
+- Process ID tracking in `integrated-traffic-system/pids/`
+
+## Stopping the System
 
 ```bash
 cd integrated-traffic-system
@@ -168,68 +266,43 @@ cd integrated-traffic-system
 # Stop all services
 ./scripts/stop-all.sh
 
-# Stop Kafka & Zookeeper
+# Stop Kafka infrastructure
 ./scripts/stop-kafka.sh
-
-# Stop MySQL
-sudo systemctl stop mysql
 ```
 
-## 📂 Key Features
+## Project Structure
 
-### ✨ Traffic Management
-- Real-time camera-based traffic analysis
-- AI-powered recommendations
-- Traffic flow monitoring (4 routes: Nord, Sud, Est, Ouest)
-- Intelligent traffic light control
-- Congestion detection and alerts
+```
+.
+├── Traffic/                    # Camera-based traffic monitoring
+├── javaproject/               # SOAP services and Centrale REST API
+│   ├── services/              # SOAP traffic flow and lights services
+│   ├── client/                # SOAP client simulator
+│   └── centraleservice/       # Central REST API
+├── sgtu-backend/              # Environmental monitoring services
+│   ├── service-pollution-rest/
+│   ├── service-bruit-tcp/
+│   ├── service-central/
+│   ├── simulateur-pollution/
+│   └── simulateur-bruit/
+├── sgtu-dashboard/            # Next.js dashboard application
+├── integrated-traffic-system/ # Integration scripts and docs
+└── docs/                      # Comprehensive documentation
+```
 
-### 🌍 Environmental Monitoring
-- Air quality monitoring (CO2, PM2.5, PM10, NO2, O3)
-- Noise level tracking
-- Real-time alerts for threshold violations
-- Historical data visualization
+## Contributing
 
-### 📊 Dashboard Features
-- Live traffic visualization
-- Interactive traffic light control
-- Air quality heat maps
-- Alert management system
-- Historical charts and analytics
-- Camera status monitoring
+This is an integrated academic/demonstration project. For contributions or modifications, please ensure:
 
-## 🔧 Configuration
+1. All services build successfully
+2. Integration tests pass
+3. Documentation is updated
+4. Code follows existing patterns
 
-Key configuration files:
-- `integrated-traffic-system/config/system.properties` - System-wide settings
-- `Traffic/database/schema.sql` - Database schema
-- `sgtu-dashboard/.env.local` - Dashboard environment variables (create from .env.example)
+## License
 
-## 🤝 Contributing
+This project is for educational and demonstration purposes.
 
-This is an integrated academic/demonstration project. For contributions:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+## Support
 
-## 📝 License
-
-This project is for educational/demonstration purposes.
-
-## 👥 Authors
-
-- Integrated system architecture and implementation
-- Original modules from separate academic projects
-
-## 🐛 Known Issues
-
-- None currently reported
-
-## 📧 Support
-
-For issues or questions, please open a GitHub issue.
-
----
-
-**⚡ Powered by:** Java 21, Spring, Apache Kafka, MySQL, Next.js 14, React, TypeScript, Tailwind CSS
+For detailed information about specific components, please refer to the documentation files in the `docs/` directory. Each file provides in-depth technical details, API specifications, and usage examples for its respective component.
